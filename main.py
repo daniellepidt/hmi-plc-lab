@@ -258,7 +258,7 @@ class Logi(Widget):
                 # initials "loop" of close door.
                 Clock.schedule_interval(self.closeDoor, 1.0 / 40.0)
                 self.state = 'doorClosing3'
-                print 'koma3'
+                print('koma3')
         elif self.state == 'doorClosing3':
             ###############
             # in linux:
