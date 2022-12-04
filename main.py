@@ -211,7 +211,9 @@ class Logi(Widget):
         set sources to first.png,second.png,third.png
         :return:
         '''
-        # todo complete 3 lines of code
+        self.first.source = 'first.png'
+        self.second.source = 'second.png'
+        self.third.source = 'third.png'
 
     def ipusDirection(self):
         '''
@@ -219,7 +221,8 @@ class Logi(Widget):
         set source to '', and mask thecolor (0, 0, 0, 1)
         :return:
         '''
-        # todo complete 2 lines of code
+        self.direction.source = ''
+        self.direction.color = (0,0,0,1)
 
     def checkColide(self, obj1, obj2):
         '''
@@ -230,7 +233,7 @@ class Logi(Widget):
         :param obj2: limit switch.
         :return: true if colides, false if not.
         '''
-        # todo 1 line of code
+        return obj1.collide_widget(obj2)
 
     def lightOn(self, obj, src):
         '''
