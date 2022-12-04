@@ -122,8 +122,8 @@ class Logi(Widget):
         :param dt: refresh rate of schedule interval
         :return:
         '''
-        # todo complete 2 lines of code
-
+        self.delet.size[0] -=1
+        self.doorBar.pos[0] = self.delet.size[0] + self.doorBar.size[0] / 2 - self.delet.pos[0] + 10
 
     def doorStop(self, dt):
         '''
@@ -146,14 +146,17 @@ class Logi(Widget):
         Called by second floor button is_pressed.
         :return:
         '''
-        # todo complete 2 lines of code
+        if self.checkColide(self.doorOpen, self.doorBar):
+            Clock.schedule_interval(self.koma2, 1.0 / 45.0)
+
 
     def moveThird(self):
         '''
         Called by third floor button
         :return:
         '''
-        # todo complete 2 lines of code
+        if self.checkColide(self.doorOpen, self.doorBar):
+            Clock.schedule_interval(self.koma3, 1.0 / 45.0)
 
     def moveUp(self):
         '''
@@ -169,7 +172,10 @@ class Logi(Widget):
         Fires when elevator car moves down
         :return:
         '''
-        # todo complete 3 lines of code
+        self.direction.color = 1, 1, 1, 1
+        self.direction.source = 'down.png'
+        self.body.pos[1] -= 1
+
 
     def moveEnd(self):
         '''
