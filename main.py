@@ -123,7 +123,7 @@ class Logi(Widget):
         :return:
         '''
         self.delet.size[0] -=1
-        self.doorBar.pos[0] = self.delet.size[0] + self.doorBar.size[0] / 2 - self.delet.pos[0] + 10
+        self.doorBar.pos[0] = self.delet.size[0] - self.doorBar.size[0] / 2 + self.delet.pos[0] - 10
 
     def doorStop(self, dt):
         '''
@@ -214,6 +214,7 @@ class Logi(Widget):
         self.first.source = 'first.png'
         self.second.source = 'second.png'
         self.third.source = 'third.png'
+        return
 
     def ipusDirection(self):
         '''
@@ -222,7 +223,8 @@ class Logi(Widget):
         :return:
         '''
         self.direction.source = ''
-        self.direction.color = (0,0,0,1)
+        self.direction.color = 0,0,0,1
+        return
 
     def checkColide(self, obj1, obj2):
         '''
@@ -242,7 +244,7 @@ class Logi(Widget):
         :param src: image path of lighted number.
         :return:
         '''
-        # todo 1 line of code
+        obj.source = src
 
     def koma3(self, dt):
         '''
@@ -325,7 +327,70 @@ class Logi(Widget):
         :param dt: refresh rate of schedule interval
         :return:
         '''
-        # todo complete code for second floor
+        if self.state == 'begin':
+            # if door open and the car in first floor or in third floor
+            if self.checkColide(self.doorOpen, self.doorBar) and (
+                    self.checkColide(self.bar, self.lSwitch1) or self.checkColide(self.bar, self.lSwitch3)):
+                # turn off indicator lights
+                self.ipusNoorot()
+                # initials "loop" of close door.
+                Clock.schedule_interval(self.closeDoor, 1.0 / 40.0)
+                self.state = 'doorClosing2'
+                print('koma2')
+        elif self.state == 'doorClosing2':
+            # if door is closed
+            if self.checkColide(self.doorBar, self.doorClose):
+                # finish "loop" of close door.
+                Clock.unschedule(self.closeDoor)
+                if self.checkColide(self.bar, self.lSwitch1):
+                    self.state = 'up2'
+                elif self.chechkColide(self.bar, self.lSwitch3):
+                    self.state = 'down2'
+                # initials "loop" of door stop made for phisi class
+                Clock.schedule_interval(self.doorStop, 1.0 / 40.0)
+
+        elif self.state == 'up2':
+            # light up indicator, and move car up.
+            self.moveUp()
+            # if the car reaches second floor
+            if self.checkColide(self.bar, self.lSwitch2):
+                # made for phisi class.
+                self.moveEnd()
+                self.state = 'inplace2'
+
+        elif self.state == 'down2':
+            # light up indicator, and move car down.
+            self.moveDown()
+            # if the car reached second floor
+            if self.checkColide(self.bar, self.lSwitch2):
+                # made for phisi class.
+                self.moveEnd()
+                self.state = 'inplace2'
+
+        elif self.state == 'inplace2':
+            # stops "loop" of door stop made for phisi class
+            Clock.unschedule(self.doorStop)
+            # initials "loop" of door open
+            Clock.schedule_interval(self.openDoor, 1.0 / 40.0)
+            # if door is opened
+            if self.checkColide(self.doorOpen, self.doorBar):
+                # stops "loop" of door open
+                Clock.unschedule(self.openDoor)
+                self.state = 'end2'
+                Clock.schedule_interval(self.doorStop, 1.0 / 55.0)
+
+        elif self.state == 'end2':
+            # stops this "loop"
+            Clock.unschedule(self.koma2)
+            # turn on second floor indicator light
+            self.lightOn(self.noora2, 'secondLight.png')
+            # close direction arrow.
+            self.ipusDirection()
+            # init state machine
+            self.state = 'begin'
+            # init selector "loop" in phisi class.
+            Clock.schedule_interval(self.selector, 1.0 / 40)
+
 
     def koma1(self, dt):
         '''
@@ -333,7 +398,56 @@ class Logi(Widget):
         :param dt: refresh rate of schedule interval
         :return:
         '''
-        # todo complete code for first floor
+        # initialize state machine
+        if self.state == 'begin':
+            # if door open and the car in second floor or car in third floor
+            if self.checkColide(self.doorOpen, self.doorBar) and (
+                    self.checkColide(self.bar, self.lSwitch2) or self.checkColide(self.bar, self.lSwitch3)):
+                # turn off indicator lights
+                self.ipusNoorot()
+                # initials "loop" of close door.
+                Clock.schedule_interval(self.closeDoor, 1.0 / 40.0)
+                self.state = 'doorClosing1'
+                print('koma 1')
+        elif self.state == 'doorClosing1':
+            # if door is closed
+            if self.checkColide(self.doorBar, self.doorClose):
+                # finish "loop" of close door.
+                Clock.unschedule(self.closeDoor)
+                self.state = 'down1'
+                # initials "loop" of door stop made for phisi class
+                Clock.schedule_interval(self.doorStop, 1.0 / 40.0)
+        elif self.state == 'down1':
+            # light up indicator, and move car up.
+            self.moveDown()
+            # if the car reaches first floor
+            if self.checkColide(self.bar, self.lSwitch1):
+                # made for phisi class.
+                self.moveEnd()
+                self.state = 'inplace1'
+        elif self.state == 'inplace1':
+            # stops "loop" of door stop made for phisi class
+            Clock.unschedule(self.doorStop)
+            # initials "loop" of door open
+            Clock.schedule_interval(self.openDoor, 1.0 / 40.0)
+            # if door is opened
+            if self.checkColide(self.doorOpen, self.doorBar):
+                # stops "loop" of door open
+                Clock.unschedule(self.openDoor)
+                self.state = 'end1'
+                Clock.schedule_interval(self.doorStop, 1.0 / 55.0)
+        elif self.state == 'end1':
+            # stops this "loop"
+            Clock.unschedule(self.koma1)
+            # turn on first floor indicator light
+            self.lightOn(self.noora1, 'firstLight.png')
+            # close direction arrow.
+            self.ipusDirection()
+            # init state machine
+            self.state = 'begin'
+            # init selector "loop" in phisi class.
+            Clock.schedule_interval(self.selector, 1.0 / 40)
+
 
 
 class Phisi(Logi):
