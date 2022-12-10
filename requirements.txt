@@ -1,6 +1,8 @@
 certifi==2022.9.24
 charset-normalizer==2.1.1
+colorzero==2.0
 docutils==0.19
+gpiozero==1.6.2
 idna==3.4
 Kivy==2.1.0
 kivy-deps.angle==0.3.3
