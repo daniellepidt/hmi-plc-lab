@@ -96,7 +96,7 @@ class Logi(Widget):
         super(Logi, self).__init__(**kwargs)
         self.state = 'begin'
         #####################
-        # Dictionary that works only on linux raspberrypi is
+        # Dictionary that works only on linux raspberry pi is
         # a linux machine.
         self.colides = {'dOpen': (self.doorBar, self.doorOpen),
                         'dClose': (self.doorBar, self.doorClose),
@@ -440,12 +440,17 @@ class Logi(Widget):
 
 
 class Phisi(Logi):
+    '''
+    The purpose of this class is to inharit from class Logi and adjust it to the raspberry pi,
+    so that to program will work by pressing the raspberry pi and not the simulations's buttons
+    '''
+
     status = ObjectProperty
 
     def __init__(self):
         super(Phisi, self).__init__()
         ##        leds
-        self.ledUp = LED(14)
+        self.ledUp = LED(14) # The number '14' is the number of physical leg in the raspberry pi  
         self.ledDown = LED(15)
         self.noora1 = LED(2)
         self.noora2 = LED(3)
@@ -471,15 +476,23 @@ class Phisi(Logi):
         self.lSwitch1 = Button(7)
         self.lSwitch2 = Button(8)
         self.lSwitch3 = Button(25)
+        # holds the elevator status (open/close and which floor it's located)
         self.colides = {'dOpen': (self.doorOpen,),
                         'dClose': (self.doorClose,),
                         'ls2': (self.lSwitch2,),
                         'ls3': (self.lSwitch3,),
                         'ls1': (self.lSwitch1,),
                         }
+        # loop to initiate the selector method to be shown every 1/40 seconds, which appears like the entire time
         Clock.schedule_interval(self.selector, 1.0 / 40.0)
 
     def selector(self, dt):
+        '''
+        This method checks the desired destination floor and the current location of the elevator.
+        If that doesn't fit, there is a loop that we'll be running till the elevator reach the destination floor.
+        :param dt: refresh rate of schedule interval
+        :return: none
+        '''
         if self.checkButtns(self.first, self.elFirst):
             Clock.schedule_interval(self.koma1, 1.0 / 40.0)
             Clock.unschedule(self.selector)
@@ -491,6 +504,10 @@ class Phisi(Logi):
             Clock.unschedule(self.selector)
 
     def changeOptions(self):
+        '''
+        Adjust the spinner view to Logi/Service as the operator choose.
+        :return:none
+        '''
         if self.status.text == 'Logi':
             self.clear_widgets()
             self.add_widget(Logi())
@@ -499,43 +516,93 @@ class Phisi(Logi):
             self.add_widget(Service())
 
     def lightOn(self, obj, src=None):
+        '''
+        Turn on the light of some pin on the raspberry pi.
+        :param obj: the pin
+        :param src: was been inherited from the predeccesor "Logi" class, and is not in use. this why we entered default value "None"
+        :return: turning on the desired pin
+        '''
         return obj.on()
 
     def ipusNoorot(self):
+        '''
+        Turns off all of the three noorot
+        :return: none
+        '''
         self.noora1.off()
         self.noora2.off()
         self.noora3.off()
 
     def closeDoor(self, dt):
+        '''
+        Defines the statues of both the Pwn and Dir to close elevator's door,
+        as shown on the video, both Pwn and Dir should be turned on for this operation.
+        :param dt: refresh rate schedule interval
+        :return: none
+        '''
         self.doPwm.on()
         self.doDir.on()
 
     def doorStop(self, dt):
+        '''
+        Defines the statues of both the Pwn and Dir to stop elevator's door, 
+        both Pwn and Dir should be turned off for this operation.
+        :param dt: refresh rate schedule interval
+        :return: none
+        '''
         self.doPwm.off()
-        self.doDir.off()
+        self.doDir.off() # Not necessary, but can help controlling the engine server later
 
     def openDoor(self, dt):
+        '''
+        Defines the statues of both the Pwn and Dir to open elevator's door, 
+        Pwn should be turned on while Dir should be turned off for this operation.
+        :param dt: refresh rate schedule interval
+        :return: none
+        '''
         self.doPwm.on()
         self.doDir.off()
 
     def checkButtns(self, but1, but2):
+        '''
+        Check if an elevator activation is needed.
+        :param but1 + param 2 : The floor button and the limit switch
+        :return: returns True if at least one of the but1/but2 are pressed or the elevator is already in that floor. Either return False.
+        '''
         return but1.is_pressed or but2.is_pressed
 
     def checkColide(self, obj):
+        '''
+        Check the  statuד of a button/limit switch
+        :param obj: a button object
+        :return: returns True while it's already pressed, otherwise False.
+        '''
         return obj.is_pressed
 
     def moveUp(self):
+        '''
+        As explaind, to make the elevator move forawrd both Pwn and Dir should be on.
+        The light of moving up is also switched on
+        '''
         self.ledUp.on()
         self.elPwm.on()
         self.elDir.on()
 
     def moveEnd(self):
+        '''
+        As explaind, to make the elevator stop forawrd both Pwn and Dir should be turned off.
+        The lights which indicates moving up/down also will be turned off.
+        '''
         self.ledUp.off()
         self.ledDown.off()
         self.elPwm.off()
         self.elDir.off()
 
     def moveDown(self):
+        '''
+        As explaind, to make the elevator move backwards both Pwn should be on while Dir should be turned off.
+        The lights which indicates moving down will be turned on.
+        '''
         self.ledDown.on()
         self.elPwm.on()
         self.elDir.off()
