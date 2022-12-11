@@ -72,13 +72,13 @@ Logi:
     doorClose:doorClose
     Image:
         size:body.size[0]/6,body.size[0]/4
-        pos:root.center_x*0.85,root.center_y
+        pos:root.center_x,root.center_y
         color:0,0,0,1
         source:
         id:direction
     Image:
         size:body.size[0]/6,body.size[0]/6
-        pos:root.center_x*1.15,root.center_y
+        pos:root.center_x*1.15,root.center_y*1.9
         source:'second.png'
         id:noora2
     Image:
@@ -92,7 +92,7 @@ Logi:
         source:'third.png'
         id:noora3
     Ta:
-        pos:970,20
+        pos:root.center_x,root.center_y/18
         id:body
     Door:
         size:body.size[0]*0.1,body.size[1]
@@ -129,19 +129,19 @@ Logi:
         id:doorClose
     Button:
         size:body.size[0]/6,body.size[0]/4
-        pos:860,20
+        pos:root.center_x-body.size[0],root.center_y/18
         text:'1'
         id:first
         on_press:root.moveFirst()
     Button:
         size:body.size[0]/6,body.size[0]/4
-        pos:860,400
+        pos:root.center_x-body.size[0],root.center_y/1.5
         text:'2'
         id:second
         on_press:root.moveSecond()
     Button:
         size:body.size[0]/6,body.size[0]/4
-        pos:860,800
+        pos:root.center_x-body.size[0],root.center_y/0.75
         text:'3'
         id:third
         on_press:root.moveThird()
@@ -167,7 +167,7 @@ Logi:
         text:'Logi'
         values:['Phisi','Logi','Service']
         id:status
-        pos:100,500
+        pos:root.center_x*0.1,root.center_y/1.2
         size:80,40
         on_text:root.changeOptions()
 
@@ -177,7 +177,7 @@ Logi:
         text:'Phisi'
         values:['Phisi','Logi','Service']
         id:status
-        pos:100,500
+        pos:root.center_x*0.1,root.center_y/1.2
         size:80,40
         on_text:root.changeOptions()
     
@@ -187,11 +187,11 @@ Logi:
         text:'Service'
         values:['Phisi','Logi','Service']
         id:status
-        pos:100,500
+        pos:_x*0.1,root.center_y/1.2
         size:80,40
         on_text:root.changeOptions()
     Label:
-        pos:640,240
+        pos:root.center_x*0.75,root.center_y*0.45
         text:'Please press constantly on the second floor button \nto open the door.\nPlease press constantly on the first floor button \nto bring the elevator down. \nWhen the elevator reaches the desired floor release the button.'
         font_size:'30dp'
 
